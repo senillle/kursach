@@ -1,0 +1,22 @@
+﻿<Window x:Class="WpfKursach.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfKursach"
+        mc:Ignorable="d"
+        Title="Графики передаточных функций" Height="985" Width="830">
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="10">
+            <Label Content="Выберите модель:" />
+            <ComboBox Name="ModelComboBox" Width="200" />
+
+            <Label Content="Выберите тип фильтра:" Margin="0,10,0,0" />
+            <ComboBox Name="FilterTypeComboBox" Width="200" />
+
+            <Button Name="BuildGraphButton" Content="Построить график" Width="200" Margin="0,10,0,10" Click="BuildGraphButton_Click" />
+
+            <Canvas Name="GraphCanvas" Width="800" Height="600" Background="LightGray" />
+        </StackPanel>
+    </Grid>
+</Window>
