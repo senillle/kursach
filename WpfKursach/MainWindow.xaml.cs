@@ -73,17 +73,13 @@ namespace WpfKursach
             double width = GraphCanvas.Width - 40; // Учитываем отступы
             double height = GraphCanvas.Height - 40;
 
-            // Центры для осей
-            double centerX = Math.Min(Math.Max((0 - minX) / (maxX - minX) * width + 20, 20), GraphCanvas.Width - 20);
-            double centerY = Math.Min(Math.Max(height - (0 - minY) / (maxY - minY) * height + 20, 20), GraphCanvas.Height - 20);
-
             // Ось X
             Line xAxis = new Line
             {
                 X1 = 20,
-                Y1 = centerY,
+                Y1 = height + 20,
                 X2 = GraphCanvas.Width - 20,
-                Y2 = centerY,
+                Y2 = height + 20,
                 Stroke = Brushes.Black,
                 StrokeThickness = 1
             };
@@ -91,9 +87,9 @@ namespace WpfKursach
             // Ось Y
             Line yAxis = new Line
             {
-                X1 = centerX,
+                X1 = 20,
                 Y1 = 20,
-                X2 = centerX,
+                X2 = 20,
                 Y2 = GraphCanvas.Height - 20,
                 Stroke = Brushes.Black,
                 StrokeThickness = 1
@@ -103,25 +99,28 @@ namespace WpfKursach
             GraphCanvas.Children.Add(yAxis);
 
             // Добавление делений и меток для X
-            for (double i = Math.Floor(minX); i <= Math.Ceiling(maxX); i++)
+            int divisionsX = 20; // Указываем количество делений
+            double stepX = maxX / divisionsX;
+
+            for (int i = 0; i <= divisionsX; i++)
             {
-                double tickX = (i - minX) / (maxX - minX) * width + 20;
-                if (tickX < 20 || tickX > GraphCanvas.Width - 20) continue; // Ограничиваем область рисования
+                double x = stepX * i;
+                double tickX = x / maxX * width + 20;
 
                 Line xTick = new Line
                 {
                     X1 = tickX,
-                    Y1 = centerY - 5,
+                    Y1 = height + 15,
                     X2 = tickX,
-                    Y2 = centerY + 5,
+                    Y2 = height + 25,
                     Stroke = Brushes.Black,
                     StrokeThickness = 1
                 };
 
                 TextBlock xLabel = new TextBlock
                 {
-                    Text = i.ToString("0.##"),
-                    Margin = new Thickness(tickX - 10, centerY + 10, 0, 0),
+                    Text = x.ToString("0.##"),
+                    Margin = new Thickness(tickX - 10, height + 30, 0, 0),
                     FontSize = 10
                 };
 
@@ -130,16 +129,19 @@ namespace WpfKursach
             }
 
             // Добавление делений и меток для Y
-            for (double i = Math.Floor(minY); i <= Math.Ceiling(maxY); i++)
+            int divisionsY = 10; // Указываем количество делений для Y
+            double stepY = maxY / divisionsY;
+
+            for (int i = 0; i <= divisionsY; i++)
             {
-                double tickY = height - ((i - minY) / (maxY - minY) * height) + 20;
-                if (tickY < 20 || tickY > GraphCanvas.Height - 20) continue; // Ограничиваем область рисования
+                double y = stepY * i;
+                double tickY = height - (y / maxY * height) + 20;
 
                 Line yTick = new Line
                 {
-                    X1 = centerX - 5,
+                    X1 = 15,
                     Y1 = tickY,
-                    X2 = centerX + 5,
+                    X2 = 25,
                     Y2 = tickY,
                     Stroke = Brushes.Black,
                     StrokeThickness = 1
@@ -147,8 +149,8 @@ namespace WpfKursach
 
                 TextBlock yLabel = new TextBlock
                 {
-                    Text = i.ToString("0.##"),
-                    Margin = new Thickness(centerX - 30, tickY - 10, 0, 0),
+                    Text = y.ToString("0.##"),
+                    Margin = new Thickness(0, tickY - 10, 0, 0),
                     FontSize = 10
                 };
 
@@ -156,6 +158,8 @@ namespace WpfKursach
                 GraphCanvas.Children.Add(yLabel);
             }
         }
+
+
 
 
 
@@ -188,7 +192,7 @@ namespace WpfKursach
 
         private double[] GetGraphBounds(int model, int filterType)
         {
-            double minX = -10, maxX = 10;
+            double minX = -10, maxX = 40;
             double minY = double.MaxValue, maxY = double.MinValue;
 
             for (double x = minX; x <= maxX; x += 0.1)
@@ -222,14 +226,15 @@ namespace WpfKursach
             // Вычисление асимптот (обнуление знаменателя)
             List<double> asymptotes = FindAsymptotes(model, filterType);
 
-            for (double x = minX; x <= maxX; x += 0.0001) // Более высокая точность
+            // Строим график только для положительных значений X и Y
+            for (double x = 0; x <= maxX; x += 0.0001) // Начинаем с 0
             {
                 double y = CalculateFunction(model, filterType, x, normalized);
 
                 // Проверяем, близка ли точка к асимптоте
                 bool nearAsymptote = asymptotes.Any(a => Math.Abs(x - a) < 0.0001);
 
-                if (double.IsInfinity(y) || double.IsNaN(y) || nearAsymptote)
+                if (double.IsInfinity(y) || double.IsNaN(y) || nearAsymptote || y < 0) // Исключаем отрицательные Y
                 {
                     if (currentPart.Points.Count > 0)
                     {
@@ -244,8 +249,8 @@ namespace WpfKursach
                 }
 
                 // Переводим координаты в Canvas
-                double canvasX = (x - minX) / (maxX - minX) * width + 20;
-                double canvasY = height - ((y - minY) / (maxY - minY) * height) + 20;
+                double canvasX = x / maxX * width + 20; // Начинаем с 20 (отступ)
+                double canvasY = height - (y / maxY * height) + 20; // Учитываем отступ сверху
 
                 // Ограничиваем точку только областью серого блока
                 if (canvasX >= 20 && canvasX <= GraphCanvas.Width - 20 && canvasY >= 20 && canvasY <= GraphCanvas.Height - 20)
@@ -274,6 +279,8 @@ namespace WpfKursach
 
             return graphParts;
         }
+
+
 
 
         private List<double> FindAsymptotes(int model, int filterType)
