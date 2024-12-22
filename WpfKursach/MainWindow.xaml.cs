@@ -29,7 +29,10 @@ namespace WpfKursach
             ModelComboBox.Items.Add("Чебышева");
             ModelComboBox.Items.Add("График");
             ModelComboBox.Items.Add("АЧХ");
+            ModelComboBox.Items.Add("ФЧХ");
             ModelComboBox.Items.Add("ХРЗ");
+            ModelComboBox.Items.Add("График единицы");
+            ModelComboBox.Items.Add("График синус квадрат");
             ModelComboBox.SelectedIndex = 0;
 
             // Заполнение списка типов фильтров
@@ -52,19 +55,28 @@ namespace WpfKursach
 
             // Определение модели и типа фильтра
             int model = ModelComboBox.SelectedIndex;
-            int filterType = FilterTypeComboBox.SelectedIndex;
-
-            // Получение границ графика
-            double[] bounds = GetGraphBounds(model, filterType);
-            double minX = bounds[0], maxX = bounds[1], minY = bounds[2], maxY = bounds[3];
 
             // Построение осей
-            DrawAxes(minX, maxX, minY, maxY);
+            DrawAxes(0, 1, 0, 2); // Диапазон OX от 0 до 1, OY от 0 до 2
 
-            // Построение графиков
-            DrawTransferFunctions(model, filterType);
+            if (model == 6) // Если выбрана модель с заданным диапазоном
+            {
+                List<Polyline> unitGraph = CreateGraphForUnit(0, 1.0 / 6, 1, 1); // Диапазон от 0 до 1/6
+                foreach (var part in unitGraph)
+                {
+                    GraphCanvas.Children.Add(part);
+                }
+            }
+            else if (model == 7)
+            {
+                DrawSinSquaredGraph(1.0 / 3, 2.0 / 3, 1, 1);
+            }
+            else
+            {
+                // Построение остальных графиков
+                DrawTransferFunctions(model, FilterTypeComboBox.SelectedIndex);
+            }
         }
-
 
         private void DrawAxes(double minX, double maxX, double minY, double maxY)
         {
@@ -99,7 +111,7 @@ namespace WpfKursach
             GraphCanvas.Children.Add(yAxis);
 
             // Добавление делений и меток для X
-            int divisionsX = 20; // Указываем количество делений
+            int divisionsX = 10; // Количество делений
             double stepX = maxX / divisionsX;
 
             for (int i = 0; i <= divisionsX; i++)
@@ -129,7 +141,7 @@ namespace WpfKursach
             }
 
             // Добавление делений и меток для Y
-            int divisionsY = 10; // Указываем количество делений для Y
+            int divisionsY = 10; // Количество делений для Y
             double stepY = maxY / divisionsY;
 
             for (int i = 0; i <= divisionsY; i++)
@@ -158,10 +170,6 @@ namespace WpfKursach
                 GraphCanvas.Children.Add(yLabel);
             }
         }
-
-
-
-
 
         private void DrawTransferFunctions(int model, int filterType)
         {
@@ -192,24 +200,127 @@ namespace WpfKursach
 
         private double[] GetGraphBounds(int model, int filterType)
         {
-            double minX = -10, maxX = 40;
+            double minX = 0, maxX = 10; // Диапазон по умолчанию
             double minY = double.MaxValue, maxY = double.MinValue;
 
-            for (double x = minX; x <= maxX; x += 0.1)
+            if (model == 6) // Модель с чётко заданным диапазоном
             {
-                double normalizedY = CalculateFunction(model, filterType, x, true);
-                double denormalizedY = CalculateFunction(model, filterType, x, false);
-
-                minY = Math.Min(minY, Math.Min(normalizedY, denormalizedY));
-                maxY = Math.Max(maxY, Math.Max(normalizedY, denormalizedY));
+                minX = 0;
+                maxX = 1; // Ограничиваем по X
+                minY = 0;
+                maxY = 1; // Ограничиваем по Y
             }
+            else
+            {
+                // Расчёт для остальных моделей
+                for (double x = minX; x <= maxX; x += 0.1)
+                {
+                    double normalizedY = CalculateFunction(model, filterType, x, true);
+                    double denormalizedY = CalculateFunction(model, filterType, x, false);
 
-            // Добавляем небольшое поле для масштабирования
-            minY = Math.Floor(minY - 1);
-            maxY = Math.Ceiling(maxY + 1);
+                    minY = Math.Min(minY, Math.Min(normalizedY, denormalizedY));
+                    maxY = Math.Max(maxY, Math.Max(normalizedY, denormalizedY));
+                }
+
+                minY = Math.Floor(minY - 1);
+                maxY = Math.Ceiling(maxY + 1);
+            }
 
             return new double[] { minX, maxX, minY, maxY };
         }
+
+        private void DrawSinSquaredGraph(double startX, double endX, double pointX, double pointY)
+        {
+            double maxY = 1; // Максимальное значение Y для sin^2(wt)
+            double maxX = 1; // Максимальное значение X
+            double w = 3 * Math.PI; // w = 3π
+
+            double width = GraphCanvas.Width - 40; // Учитываем отступы
+            double height = GraphCanvas.Height - 40;
+
+            // Рисуем оси
+            DrawAxes(0, maxX, 0, 2); // Ось Y до 2, чтобы график был нагляднее
+
+            // Рисуем график sin^2(wt) на указанном диапазоне
+            Polyline graph = new Polyline
+            {
+                Stroke = Brushes.Green,
+                StrokeThickness = 2
+            };
+
+            for (double x = startX; x <= endX; x += 0.001)
+            {
+                double y = Math.Pow(Math.Sin(w * x), 2); // sin^2(wt)
+
+                // Переводим координаты в Canvas
+                double canvasX = x / maxX * width + 20;
+                double canvasY = height - (y / 2 * height) + 20; // Масштабируем Y под максимум 2
+
+                graph.Points.Add(new Point(canvasX, canvasY));
+            }
+
+            // Добавляем график на Canvas
+            GraphCanvas.Children.Add(graph);
+
+            // Добавляем точку (1, 1)
+            Ellipse point = new Ellipse
+            {
+                Width = 6,
+                Height = 6,
+                Fill = Brushes.Red
+            };
+
+            double pointCanvasX = pointX / maxX * width + 20;
+            double pointCanvasY = height - (pointY / 2 * height) + 20;
+
+            Canvas.SetLeft(point, pointCanvasX - 3); // Центрируем точку
+            Canvas.SetTop(point, pointCanvasY - 3);
+            GraphCanvas.Children.Add(point);
+        }
+
+        private List<Polyline> CreateGraphForUnit(double startX, double endX, double yValue, double pointX)
+        {
+            List<Polyline> graphParts = new List<Polyline>();
+            Polyline line = new Polyline
+            {
+                Stroke = Brushes.Green, // Цвет линии
+                StrokeThickness = 2
+            };
+
+            double width = GraphCanvas.Width - 40; // Учитываем отступы
+            double height = GraphCanvas.Height - 40;
+
+            // Линия от startX до endX
+            for (double x = startX; x <= endX; x += 0.01)
+            {
+                double canvasX = x / 1 * width + 20; // Пропорция по X
+                double canvasY = height - (yValue / 2 * height) + 20; // Пропорция по Y (до 2)
+
+                line.Points.Add(new Point(canvasX, canvasY));
+            }
+
+            graphParts.Add(line);
+
+            // Точка на графике (pointX, yValue)
+            Ellipse point = new Ellipse
+            {
+                Width = 6,
+                Height = 6,
+                Fill = Brushes.Red
+            };
+
+            double pointCanvasX = pointX / 1 * width + 20;
+            double pointCanvasY = height - (yValue / 2 * height) + 20;
+
+            Canvas.SetLeft(point, pointCanvasX - 3); // Центруем точку
+            Canvas.SetTop(point, pointCanvasY - 3);
+
+            GraphCanvas.Children.Add(point);
+
+            return graphParts;
+        }
+
+
 
         private List<Polyline> CreateGraph(Brush color, int model, int filterType, bool normalized, double minX, double maxX, double minY, double maxY)
         {
@@ -287,7 +398,7 @@ namespace WpfKursach
         {
             List<double> asymptotes = new List<double>();
 
-            if (model == 2) // Для функции "По приколу"
+            if (model == 2)
             {
                 double o = 2.201216298;
                 double a1 = 0.8379138549;
@@ -315,11 +426,30 @@ namespace WpfKursach
 
         private double CalculateFunction(int model, int filterType, double p, bool normalized)
         {
+            //с-0325-31
             double o = 2.201216298;
             double a1 = 0.8379138549;
             double a2 = 0.3071740531;
             double c = 4.472957086;
             double b = 1.0947347065;
+
+
+            //c0350-33
+            /*
+            double o = 2.07648729;
+            double a1 = 0.5031863086;
+            double a2 = 0.1945487548;
+            double c = 8.764948695;
+            double b = 0.9694279502;
+            */
+
+            /* Даня и Жека 93-20-33
+            double o = 2.07648729;
+            double a1 = 0.9779905926;
+            double a2 = 0.3276465410;
+            double c = 3.098877330;
+            double b = 1.1468952283;
+            */
             if (model == 0) // Золотарёва-Кауэра
             {
                 switch (filterType)
@@ -346,7 +476,11 @@ namespace WpfKursach
             else if (model == 3)
                 return Math.Abs((p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b)));
             else if (model == 4)
-                return 20 * Math.Log10( 1 / Math.Abs((p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b))));
+            {
+
+            }
+            else if (model == 5)
+                return 20 * Math.Log10(1 / Math.Abs((p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b))));
 
             return 0;
         }
