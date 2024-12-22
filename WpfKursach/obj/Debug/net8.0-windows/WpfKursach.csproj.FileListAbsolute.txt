@@ -18,3 +18,4 @@ C:\Users\vladi\source\repos\WpfKursach\WpfKursach\obj\Debug\net8.0-windows\refin
 C:\Users\vladi\source\repos\WpfKursach\WpfKursach\obj\Debug\net8.0-windows\WpfKursach.pdb
 C:\Users\vladi\source\repos\WpfKursach\WpfKursach\obj\Debug\net8.0-windows\WpfKursach.genruntimeconfig.cache
 C:\Users\vladi\source\repos\WpfKursach\WpfKursach\obj\Debug\net8.0-windows\ref\WpfKursach.dll
+C:\Users\vladi\source\repos\WpfKursach\WpfKursach\obj\Debug\net8.0-windows\WpfKursach.sourcelink.json

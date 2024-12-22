@@ -27,7 +27,9 @@ namespace WpfKursach
             // Заполнение списка моделей
             ModelComboBox.Items.Add("Золотарева-Кауэра");
             ModelComboBox.Items.Add("Чебышева");
-            ModelComboBox.Items.Add("По приколу");
+            ModelComboBox.Items.Add("График");
+            ModelComboBox.Items.Add("АЧХ");
+            ModelComboBox.Items.Add("ХРЗ");
             ModelComboBox.SelectedIndex = 0;
 
             // Заполнение списка типов фильтров
@@ -72,8 +74,8 @@ namespace WpfKursach
             double height = GraphCanvas.Height - 40;
 
             // Центры для осей
-            double centerX = (0 - minX) / (maxX - minX) * width + 20;
-            double centerY = height - (0 - minY) / (maxY - minY) * height + 20;
+            double centerX = Math.Min(Math.Max((0 - minX) / (maxX - minX) * width + 20, 20), GraphCanvas.Width - 20);
+            double centerY = Math.Min(Math.Max(height - (0 - minY) / (maxY - minY) * height + 20, 20), GraphCanvas.Height - 20);
 
             // Ось X
             Line xAxis = new Line
@@ -104,6 +106,8 @@ namespace WpfKursach
             for (double i = Math.Floor(minX); i <= Math.Ceiling(maxX); i++)
             {
                 double tickX = (i - minX) / (maxX - minX) * width + 20;
+                if (tickX < 20 || tickX > GraphCanvas.Width - 20) continue; // Ограничиваем область рисования
+
                 Line xTick = new Line
                 {
                     X1 = tickX,
@@ -116,7 +120,7 @@ namespace WpfKursach
 
                 TextBlock xLabel = new TextBlock
                 {
-                    Text = i.ToString("0.##"), // Точное значение с двумя знаками после запятой
+                    Text = i.ToString("0.##"),
                     Margin = new Thickness(tickX - 10, centerY + 10, 0, 0),
                     FontSize = 10
                 };
@@ -129,9 +133,7 @@ namespace WpfKursach
             for (double i = Math.Floor(minY); i <= Math.Ceiling(maxY); i++)
             {
                 double tickY = height - ((i - minY) / (maxY - minY) * height) + 20;
-
-                // Пропускаем деление, если оно близко к нулю
-                if (Math.Abs(i) < 1e-10) i = 0;
+                if (tickY < 20 || tickY > GraphCanvas.Height - 20) continue; // Ограничиваем область рисования
 
                 Line yTick = new Line
                 {
@@ -145,7 +147,7 @@ namespace WpfKursach
 
                 TextBlock yLabel = new TextBlock
                 {
-                    Text = i.ToString("0.##"), // Точное значение с двумя знаками после запятой
+                    Text = i.ToString("0.##"),
                     Margin = new Thickness(centerX - 30, tickY - 10, 0, 0),
                     FontSize = 10
                 };
@@ -154,6 +156,7 @@ namespace WpfKursach
                 GraphCanvas.Children.Add(yLabel);
             }
         }
+
 
 
         private void DrawTransferFunctions(int model, int filterType)
@@ -169,17 +172,19 @@ namespace WpfKursach
             double minX = bounds[0], maxX = bounds[1], minY = bounds[2], maxY = bounds[3];
 
             // Построение графиков
-            Polyline normalizedGraph = CreateGraph(Brushes.Blue, model, filterType, true, minX, maxX, minY, maxY);
-            Polyline denormalizedGraph = CreateGraph(Brushes.Red, model, filterType, false, minX, maxX, minY, maxY);
+            List<Polyline> normalizedGraphs = CreateGraph(Brushes.Blue, model, filterType, true, minX, maxX, minY, maxY);
+            List<Polyline> denormalizedGraphs = CreateGraph(Brushes.Red, model, filterType, false, minX, maxX, minY, maxY);
+
+            // Добавление графиков на Canvas
+            foreach (var graph in normalizedGraphs)
+                GraphCanvas.Children.Add(graph);
+
+            foreach (var graph in denormalizedGraphs)
+                GraphCanvas.Children.Add(graph);
 
             // Добавление легенды
             AddLegend();
-
-            // Добавление графиков на Canvas
-            GraphCanvas.Children.Add(normalizedGraph);
-            GraphCanvas.Children.Add(denormalizedGraph);
         }
-
 
         private double[] GetGraphBounds(int model, int filterType)
         {
@@ -202,9 +207,10 @@ namespace WpfKursach
             return new double[] { minX, maxX, minY, maxY };
         }
 
-        private Polyline CreateGraph(Brush color, int model, int filterType, bool normalized, double minX, double maxX, double minY, double maxY)
+        private List<Polyline> CreateGraph(Brush color, int model, int filterType, bool normalized, double minX, double maxX, double minY, double maxY)
         {
-            Polyline graph = new Polyline
+            List<Polyline> graphParts = new List<Polyline>();
+            Polyline currentPart = new Polyline
             {
                 Stroke = color,
                 StrokeThickness = 2
@@ -213,16 +219,27 @@ namespace WpfKursach
             double width = GraphCanvas.Width - 40;  // Учитываем отступы
             double height = GraphCanvas.Height - 40;
 
-            Point? previousPoint = null; // Предыдущая точка для проверки разрыва
+            // Вычисление асимптот (обнуление знаменателя)
+            List<double> asymptotes = FindAsymptotes(model, filterType);
 
-            for (double x = minX; x <= maxX; x += 0.1)
+            for (double x = minX; x <= maxX; x += 0.0001) // Более высокая точность
             {
                 double y = CalculateFunction(model, filterType, x, normalized);
 
-                // Исключение точек с большими значениями
-                if (Math.Abs(y) > Math.Abs(maxY * 10)) // Если значение выходит далеко за пределы оси
+                // Проверяем, близка ли точка к асимптоте
+                bool nearAsymptote = asymptotes.Any(a => Math.Abs(x - a) < 0.0001);
+
+                if (double.IsInfinity(y) || double.IsNaN(y) || nearAsymptote)
                 {
-                    previousPoint = null; // Сбрасываем предыдущую точку, чтобы не соединять
+                    if (currentPart.Points.Count > 0)
+                    {
+                        graphParts.Add(currentPart); // Завершаем текущую часть
+                        currentPart = new Polyline
+                        {
+                            Stroke = color,
+                            StrokeThickness = 2
+                        };
+                    }
                     continue;
                 }
 
@@ -230,21 +247,64 @@ namespace WpfKursach
                 double canvasX = (x - minX) / (maxX - minX) * width + 20;
                 double canvasY = height - ((y - minY) / (maxY - minY) * height) + 20;
 
-                Point currentPoint = new Point(canvasX, canvasY);
-
-                // Добавляем текущую точку только если предыдущая существовала
-                if (previousPoint.HasValue)
+                // Ограничиваем точку только областью серого блока
+                if (canvasX >= 20 && canvasX <= GraphCanvas.Width - 20 && canvasY >= 20 && canvasY <= GraphCanvas.Height - 20)
                 {
-                    graph.Points.Add(currentPoint);
+                    currentPart.Points.Add(new Point(canvasX, canvasY));
                 }
-
-                previousPoint = currentPoint; // Обновляем предыдущую точку
+                else
+                {
+                    if (currentPart.Points.Count > 0)
+                    {
+                        graphParts.Add(currentPart); // Завершаем текущую часть
+                        currentPart = new Polyline
+                        {
+                            Stroke = color,
+                            StrokeThickness = 2
+                        };
+                    }
+                }
             }
 
-            return graph;
+            // Добавляем последнюю часть графика
+            if (currentPart.Points.Count > 0)
+            {
+                graphParts.Add(currentPart);
+            }
+
+            return graphParts;
         }
 
 
+        private List<double> FindAsymptotes(int model, int filterType)
+        {
+            List<double> asymptotes = new List<double>();
+
+            if (model == 2) // Для функции "По приколу"
+            {
+                double o = 2.201216298;
+                double a1 = 0.8379138549;
+                double a2 = 0.3071740531;
+                double c = 4.472957086;
+                double b = 1.0947347065;
+
+                // Первая часть знаменателя: (p - a1) = 0
+                asymptotes.Add(a1);
+
+                // Вторая часть знаменателя: (p^2 - 2a2p + a2^2 + b^2) = 0
+                double discriminant = 4 * a2 * a2 - 4 * (a2 * a2 + b * b);
+                if (discriminant >= 0)
+                {
+                    double root1 = (2 * a2 + Math.Sqrt(discriminant)) / 2;
+                    double root2 = (2 * a2 - Math.Sqrt(discriminant)) / 2;
+                    asymptotes.Add(root1);
+                    asymptotes.Add(root2);
+                }
+            }
+
+            // Возвращаем отсортированный список асимптот
+            return asymptotes.Distinct().OrderBy(a => a).ToList();
+        }
 
         private double CalculateFunction(int model, int filterType, double p, bool normalized)
         {
@@ -273,9 +333,13 @@ namespace WpfKursach
             else if (model == 1) // Чебышева
             {
                 return normalized ? 1 / Math.Sqrt(1 + p * p) : 1 / Math.Sqrt(1 + 4 * p * p);
-            } 
+            }
             else if (model == 2)
                 return (p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b));
+            else if (model == 3)
+                return Math.Abs((p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b)));
+            else if (model == 4)
+                return 20 * Math.Log10( 1 / Math.Abs((p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b))));
 
             return 0;
         }
@@ -286,14 +350,14 @@ namespace WpfKursach
             {
                 Text = "Нормированная функция (синяя)",
                 Foreground = Brushes.Blue,
-                Margin = new Thickness(10, 550, 0, 0)
+                Margin = new Thickness(10, 0, 0, 0)
             };
 
             TextBlock denormalizedLegend = new TextBlock
             {
                 Text = "Денормированная функция (красная)",
                 Foreground = Brushes.Red,
-                Margin = new Thickness(10, 570, 0, 0)
+                Margin = new Thickness(10, 20, 0, 0)
             };
 
             GraphCanvas.Children.Add(normalizedLegend);

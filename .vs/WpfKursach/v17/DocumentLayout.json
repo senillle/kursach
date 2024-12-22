@@ -22,12 +22,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
@@ -42,8 +38,7 @@
               "RelativeToolTip": "WpfKursach\\AssemblyInfo.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-21T16:35:26.395Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-21T16:35:26.395Z"
             },
             {
               "$type": "Document",
@@ -54,8 +49,7 @@
               "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\MainWindow.xaml",
               "RelativeToolTip": "WpfKursach\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-12-21T16:31:14.064Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-21T16:31:14.064Z"
             },
             {
               "$type": "Document",
@@ -65,7 +59,7 @@
               "RelativeDocumentMoniker": "WpfKursach\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\MainWindow.xaml.cs",
               "RelativeToolTip": "WpfKursach\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAOAAAAAAAAAAAAAwwPEAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAG8BAAAAAAAAAAAAwIIBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-21T16:31:13.155Z",
               "EditorCaption": ""
