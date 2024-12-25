@@ -7,16 +7,20 @@
       "RelativeMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|solutionrelative:wpfkursach\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|c:\\users\\vladi\\source\\repos\\wpfkursach\\wpfkursach\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|solutionrelative:wpfkursach\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|c:\\users\\vladi\\source\\repos\\wpfkursach\\wpfkursach\\graphrenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|solutionrelative:wpfkursach\\graphrenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|c:\\users\\vladi\\source\\repos\\wpfkursach\\wpfkursach\\graphlayout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|solutionrelative:wpfkursach\\graphlayout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|c:\\users\\vladi\\source\\repos\\wpfkursach\\wpfkursach\\graphcalculate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|solutionrelative:wpfkursach\\graphcalculate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|c:\\users\\vladi\\source\\repos\\wpfkursach\\wpfkursach\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|solutionrelative:wpfkursach\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|c:\\users\\vladi\\source\\repos\\wpfkursach\\wpfkursach\\wpfkursach.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
-      "RelativeMoniker": "D:0:0:{DF782B31-9528-4E12-AA5F-BAF0AA6CC7A4}|WpfKursach\\WpfKursach.csproj|solutionrelative:wpfkursach\\wpfkursach.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,11 +30,46 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GraphLayout.cs",
+              "DocumentMoniker": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\GraphLayout.cs",
+              "RelativeDocumentMoniker": "WpfKursach\\GraphLayout.cs",
+              "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\GraphLayout.cs",
+              "RelativeToolTip": "WpfKursach\\GraphLayout.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAGkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-25T18:44:51.104Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GraphCalculate.cs",
+              "DocumentMoniker": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\GraphCalculate.cs",
+              "RelativeDocumentMoniker": "WpfKursach\\GraphCalculate.cs",
+              "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\GraphCalculate.cs",
+              "RelativeToolTip": "WpfKursach\\GraphCalculate.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAswHkAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-25T18:27:04.24Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "GraphRenderer.cs",
+              "DocumentMoniker": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\GraphRenderer.cs",
+              "RelativeDocumentMoniker": "WpfKursach\\GraphRenderer.cs",
+              "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\GraphRenderer.cs",
+              "RelativeToolTip": "WpfKursach\\GraphRenderer.cs",
+              "ViewState": "AgIAAJ8AAAAAAAAAAAAgwBYAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-25T18:23:34.071Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -40,44 +79,22 @@
               "RelativeDocumentMoniker": "WpfKursach\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\MainWindow.xaml.cs",
               "RelativeToolTip": "WpfKursach\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAFYBAAAAAAAAAAAiwEcAAAA3AAAAAAAAAA==",
+              "ViewState": "AgIAACgAAAAAAAAAAADwv0AAAABlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-21T16:31:13.155Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "WpfKursach",
-              "DocumentMoniker": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\WpfKursach.csproj",
-              "RelativeDocumentMoniker": "WpfKursach\\WpfKursach.csproj",
-              "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\WpfKursach.csproj",
-              "RelativeToolTip": "WpfKursach\\WpfKursach.csproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-12-22T12:47:40.032Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AssemblyInfo.cs",
-              "DocumentMoniker": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\AssemblyInfo.cs",
-              "RelativeDocumentMoniker": "WpfKursach\\AssemblyInfo.cs",
-              "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\AssemblyInfo.cs",
-              "RelativeToolTip": "WpfKursach\\AssemblyInfo.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-21T16:35:26.395Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\MainWindow.xaml",
               "RelativeDocumentMoniker": "WpfKursach\\MainWindow.xaml",
               "ToolTip": "C:\\Users\\vladi\\source\\repos\\WpfKursach\\WpfKursach\\MainWindow.xaml",
               "RelativeToolTip": "WpfKursach\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-12-21T16:31:14.064Z"
+              "WhenOpened": "2024-12-21T16:31:14.064Z",
+              "EditorCaption": ""
             }
           ]
         }
