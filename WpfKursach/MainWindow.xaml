@@ -7,16 +7,35 @@
         mc:Ignorable="d"
         Title="Графики передаточных функций" Height="985" Width="830">
     <Grid>
-        <StackPanel Orientation="Vertical" Margin="10">
+        <!-- Левая часть с элементами управления -->
+        <StackPanel Orientation="Vertical" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
             <Label Content="Выберите модель:" />
-            <ComboBox Name="ModelComboBox" Width="200" />
+            <ComboBox Name="ModelComboBox" Width="200" Margin="0,5,0,0" />
 
             <Label Content="Выберите тип фильтра:" Margin="0,10,0,0" />
-            <ComboBox Name="FilterTypeComboBox" Width="200" />
+            <ComboBox Name="FilterTypeComboBox" Width="200" Margin="0,5,0,0" />
 
             <Button Name="BuildGraphButton" Content="Построить график" Width="200" Margin="0,10,0,10" Click="BuildGraphButton_Click" />
-
-            <Canvas Name="GraphCanvas" Width="800" Height="600" Background="LightGray" />
         </StackPanel>
+
+        <!-- Правая часть с вводом границ -->
+        <StackPanel Orientation="Vertical" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Right">
+            <TextBlock Text="Границы OX" Margin="0,5"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBox x:Name="MinXInput" Width="50" Text="0" Margin="0,0,5,0"/>
+                <TextBox x:Name="MaxXInput" Width="50" Text="10" Margin="5,0,0,0"/>
+            </StackPanel>
+
+            <TextBlock Text="Границы OY" Margin="0,10,0,0"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBox x:Name="MinYInput" Width="50" Text="0" Margin="0,0,5,0"/>
+                <TextBox x:Name="MaxYInput" Width="50" Text="2" Margin="5,0,0,0"/>
+            </StackPanel>
+
+            <Button x:Name="ApplyButton" Content="Применить" Width="100" Click="ApplyButton_Click" Margin="0,10,0,0"/>
+        </StackPanel>
+
+        <!-- Центр с Canvas для графика -->
+        <Canvas Name="GraphCanvas" Width="800" Height="600" Background="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" />
     </Grid>
 </Window>

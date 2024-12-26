@@ -82,7 +82,8 @@ namespace WpfKursach
             double a2 = 0.3071740531;
             double c = 4.472957086;
             double b = 1.0947347065;
-
+            double fd = p;
+            double fdMax = 4.2 * 3;
 
             //c0350-33
             /*
@@ -127,9 +128,13 @@ namespace WpfKursach
                 return (p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b));
             else if (model == 3)
                 return Math.Abs((p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b)));
-            else if (model == 4)
+            else if (model == 4 && fdMax >= fd)
             {
-
+                double aF = c * (2 * fd * a2 + a1 * fd * fd - a1 * a2 * a2 - a1 * b * b);
+                double bF = c * fd * (b * b - fd * fd - a2 * a2 + 2 * a1 * a2);
+                Console.WriteLine(aF);
+                Console.WriteLine(bF);
+                return -1 * Math.Atan(bF / aF);
             }
             else if (model == 5)
                 return 20 * Math.Log10(1 / Math.Abs((p * p + o * o) / (c * (p - a1) * (p * p - 2 * a2 * p + a2 * a2 + b * b))));

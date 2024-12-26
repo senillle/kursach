@@ -16,15 +16,15 @@ namespace WpfKursach
     /// </summary>
     public partial class MainWindow : Window
     {
-        private GraphRenderer _graphRenders;
+        private GraphRenderer _graphRenderer;
         private GraphCalculate __graphCalculate;
-        private GraphLayout _graphicLayout;
+        private GraphLayout _graphLayout;
         public MainWindow()
         {
             InitializeComponent();
-            _graphRenders = new GraphRenderer();
+            _graphRenderer = new GraphRenderer();
             __graphCalculate = new GraphCalculate();
-            _graphicLayout = new GraphLayout();
+            _graphLayout = new GraphLayout();
             PopulateComboBoxes();
         }
 
@@ -50,19 +50,33 @@ namespace WpfKursach
 
         private void BuildGraphButton_Click(object sender, RoutedEventArgs e)
         {
+            // Проверка, выбраны ли модель и тип фильтра
             if (ModelComboBox.SelectedIndex < 0 || FilterTypeComboBox.SelectedIndex < 0)
             {
                 MessageBox.Show("Выберите модель и тип фильтра.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
+            // Очистка Canvas перед построением графика
             GraphCanvas.Children.Clear();
-            int model = ModelComboBox.SelectedIndex;
-            _graphicLayout.DrawAxes(GraphCanvas, 0, 1, 0, 2); //диапазон OX от 0 до 1, OY от 0 до 2
 
+            // Получение выбранной модели
+            int model = ModelComboBox.SelectedIndex;
+
+            // Получение границ осей из пользовательского ввода
+            double minX = double.TryParse(MinXInput.Text, out var parsedMinX) ? parsedMinX : 0;
+            double maxX = double.TryParse(MaxXInput.Text, out var parsedMaxX) ? parsedMaxX : 10;
+            double minY = double.TryParse(MinYInput.Text, out var parsedMinY) ? parsedMinY : 0;
+            double maxY = double.TryParse(MaxYInput.Text, out var parsedMaxY) ? parsedMaxY : 2;
+
+            // Построение осей с указанными границами
+            _graphLayout.DrawAxes(GraphCanvas, minX, maxX, minY, maxY);
+
+            // Определение, какой график строить, в зависимости от модели
             if (model == 6)
             {
-                List<Polyline> unitGraph = _graphRenders.CreateGraphForUnit(GraphCanvas, 0, 1.0 / 6, 1, 1); //диапазон от 0 до 1/6
+                // Построение графика для модели "График единицы"
+                List<Polyline> unitGraph = _graphRenderer.CreateGraphForUnit(GraphCanvas, 0, 1.0 / 6, 1, 1, minX, maxX, minY, maxY);
                 foreach (var part in unitGraph)
                 {
                     GraphCanvas.Children.Add(part);
@@ -70,11 +84,45 @@ namespace WpfKursach
             }
             else if (model == 7)
             {
-                _graphRenders.DrawSinSquaredGraph(GraphCanvas, 1.0 / 3, 2.0 / 3, 1, 1);
+                // Построение графика для модели "График синус квадрат"
+                _graphRenderer.DrawSinSquaredGraph(GraphCanvas, 1.0 / 3, 2.0 / 3, 1, 1, minX, maxX, minY, maxY);
             }
             else
             {
-                _graphRenders.DrawTransferFunctions(GraphCanvas, model, FilterTypeComboBox.SelectedIndex);
+                // Построение графика для остальных моделей
+                _graphRenderer.DrawTransferFunctions(GraphCanvas, model, FilterTypeComboBox.SelectedIndex, minX, maxX, minY, maxY);
+            }
+        }
+
+        private double MinX = 0;
+        private double MaxX = 10;
+        private double MinY = 0;
+        private double MaxY = 2;
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Получаем значения из текстовых полей
+                double minX = double.Parse(MinXInput.Text);
+                double maxX = double.Parse(MaxXInput.Text);
+                double minY = double.Parse(MinYInput.Text);
+                double maxY = double.Parse(MaxYInput.Text);
+
+                // Проверяем корректность значений
+                if (minX >= maxX || minY >= maxY)
+                {
+                    MessageBox.Show("Минимальные значения должны быть меньше максимальных.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Перерисовываем графики с новыми границами
+                GraphCanvas.Children.Clear();
+                _graphLayout.DrawAxes(GraphCanvas, minX, maxX, minY, maxY);
+                _graphRenderer.DrawTransferFunctions(GraphCanvas, ModelComboBox.SelectedIndex, FilterTypeComboBox.SelectedIndex, minX, maxX, minY, maxY);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Введите числовые значения для границ.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }
